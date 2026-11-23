@@ -60,7 +60,7 @@ public class JSONAbgeordneter implements Abgeordneter {
 
     /**
      * JAVA OBJECT ------> DOCUMENT (für MongoDB)
-     * Dokument für die Collection "Abgeordneter" (ohne Reden, diese kommen in eigene Collection)
+     * Dokument für die Collection "abgeordnete" (ohne Reden, diese kommen in eigene Collection)
      * @return Dokument
      */
     public Document toDocument() {
