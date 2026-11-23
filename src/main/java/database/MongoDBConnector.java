@@ -20,6 +20,7 @@ import java.util.Properties;
 /**
  * Verbindung zur MongoDB: erstellen, lesen, zählen, aggregieren.
  * Zugangsdaten kommen aus einer Konfigurationsdatei (Properties).
+ * AutoCloseable ist ein Interface mit methode close.
  */
 public class MongoDBConnector implements AutoCloseable {
 
@@ -34,13 +35,14 @@ public class MongoDBConnector implements AutoCloseable {
      * @throws DatabaseException Datei fehlt, Schlüssel fehlt oder Port ungültig
      */
     public MongoDBConnector(String configPfad) throws DatabaseException {
-        Properties p = new Properties();
+        Properties p = new Properties(); //properties ist ein class um Konfigurationsdatei zu lesen (key: value)
         try (FileInputStream in = new FileInputStream(configPfad)) {
-            p.load(in);
+            p.load(in); // liest jede Zeile und speichert in einem Map
         } catch (IOException e) {
             throw new DatabaseException("Konfigurationsdatei nicht lesbar: " + configPfad, e);
         }
 
+        // lese(p, key) ----> speichert Value in host/database/user/password
         String host = lese(p, "remote_host");
         String database = lese(p, "remote_database");
         String user = lese(p, "remote_user");
@@ -52,10 +54,12 @@ public class MongoDBConnector implements AutoCloseable {
             throw new DatabaseException("Ungültiger Port in der Konfiguration", e);
         }
 
+        // b -> b.hosts(...) ist lambda
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyToClusterSettings(b -> b.hosts(List.of(new ServerAddress(host, port))))
                 .credential(MongoCredential.createCredential(user, database, password.toCharArray()))
                 .build();
+
         this.client = MongoClients.create(settings);
         this.db = client.getDatabase(database);
     }
@@ -73,7 +77,7 @@ public class MongoDBConnector implements AutoCloseable {
      * Erstellt Dokumente in einer Collection.
      *
      * @param collection Name der Collection
-     * @param dokumente  einzufügende Dokumente
+     * @param dokumente einzufügende Dokumente
      * @throws DatabaseException bei Datenbankfehler
      */
     public void insert(String collection, List<Document> dokumente) throws DatabaseException {
@@ -89,9 +93,10 @@ public class MongoDBConnector implements AutoCloseable {
 
     /**
      * Liest Dokumente anhand eines Filters.
+     * filter befindet sich in factory
      *
      * @param collection Name der Collection
-     * @param filter     Filter (leeres Document = alle)
+     * @param filter Filter (leeres Document = alle)
      * @return passende Dokumente
      * @throws DatabaseException bei Datenbankfehler
      */
@@ -104,10 +109,10 @@ public class MongoDBConnector implements AutoCloseable {
     }
 
     /**
-     * Zählt alle Dokumente einer Collection.
+     * zählt alle Dokumente einer Collection.
      *
      * @param collection Name der Collection
-     * @return Anzahl (0 wenn Collection nicht existiert)
+     * @return Anzahl (0, wenn Collection nicht existiert)
      * @throws DatabaseException bei Datenbankfehler
      */
     public long count(String collection) throws DatabaseException {
@@ -119,7 +124,9 @@ public class MongoDBConnector implements AutoCloseable {
     }
 
     /**
-     * Führt eine Aggregation aus.
+     * führt eine Aggregation aus.
+     * pipeline: Liste von Stufen, jede Stufe verarbeitet das Ergebnis der vorigen
+     * pipeline befindet sich in factory
      *
      * @param collection Name der Collection
      * @param pipeline   Aggregation-Stufen
@@ -134,7 +141,7 @@ public class MongoDBConnector implements AutoCloseable {
         }
     }
 
-    /** Schließt die Verbindung. */
+    //Schließt die Verbindung
     @Override
     public void close() {
         client.close();
