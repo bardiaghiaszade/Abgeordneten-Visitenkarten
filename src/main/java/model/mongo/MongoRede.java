@@ -10,12 +10,18 @@ public class MongoRede implements Rede {
 
     private final Document doc;
 
+
+
     /**
+     * constructor
      * @param doc Dokument aus der Collection "reden"
      */
     public MongoRede(Document doc) {
         this.doc = doc;
     }
+
+
+
 
     @Override
     public int getAbgeordnetenId() { return doc.getInteger("abgeordneterId"); }

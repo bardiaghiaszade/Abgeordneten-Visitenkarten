@@ -12,13 +12,19 @@ public class MongoAbgeordneter implements Abgeordneter {
 
     private final Document doc;
 
+
+
     /**
-     * @param doc Dokument aus der Collection "abgeordnete"; Feld "anzahlReden"
-     *            kommt aus der Aggregation (sonst 0)
+     * constructor
+     * @param doc Dokument aus der Collection "Abgeordneter"
+     * Feld "anzahlReden" kommt aus der Aggregation (sonst 0)
      */
     public MongoAbgeordneter(Document doc) {
         this.doc = doc;
     }
+
+
+
 
     @Override
     public int getId() { return doc.getInteger("id"); }

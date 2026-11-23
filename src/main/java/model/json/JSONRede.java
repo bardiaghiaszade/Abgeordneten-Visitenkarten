@@ -5,6 +5,8 @@ import org.bson.Document;
 
 /**
  * Rede aus der JSON-Datei
+ * Lesen Daten aus der JSON-Datei und erzeugen
+ * per toDocument() Dokumente für den Import in MongoDB.
  */
 public class JSONRede implements Rede {
 
@@ -15,10 +17,13 @@ public class JSONRede implements Rede {
     private final String content;
 
     /**
+     *
+     * constructor.
+     * DOCUMENT ------> JAVA OBJECT (typsichere Felder, Zugriff über Getter).
      * Erstellt Rede aus einem JSON-Objekt
      *
-     * @param abgeordnetenId ID des Abgeordneten
-     * @param d              geparstes JSON-Objekt
+     * @param abgeordnetenId id des Abgeordneten
+     * @param d geparstes JSON-Objekt (Dokument)
      */
     public JSONRede(int abgeordnetenId, Document d) {
         this.abgeordnetenId = abgeordnetenId;
@@ -28,7 +33,12 @@ public class JSONRede implements Rede {
         this.content = d.getString("content");
     }
 
-    /** Dokument für die Collection "reden". */
+
+    /**
+     * JAVA OBJECT ------> DOCUMENT (für MongoDB)
+     * Dokument für die Collection "reden".
+     * @return Dokument
+     */
     public Document toDocument() {
         return new Document("abgeordneterId", abgeordnetenId)
                 .append("datum", datum)

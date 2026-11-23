@@ -8,6 +8,8 @@ import java.util.List;
 
 /**
  * Abgeordneter aus der JSON-Datei
+ * Lesen Daten aus der JSON-Datei und erzeugen
+ * per toDocument() Dokumente für den Import in MongoDB.
  */
 public class JSONAbgeordneter implements Abgeordneter {
 
@@ -22,13 +24,16 @@ public class JSONAbgeordneter implements Abgeordneter {
     private final String sterbedatum;
     private final String geschlecht;
     private final String partei;
-    private final List<String> perioden;
-    private final List<JSONRede> reden = new ArrayList<>();
+
+    private final List<String> perioden; //liste
+    private final List<JSONRede> reden = new ArrayList<>(); //liste
 
     /**
+     * constructor.
+     * DOCUMENT ------> JAVA OBJECT (typsichere Felder, Zugriff über Getter).
      * Erstellt Abgeordneten aus einem JSON-Objekt
      *
-     * @param d geparstes JSON-Objekt
+     * @param d geparstes JSON-Objekt (Dokument)
      */
     public JSONAbgeordneter(Document d) {
         this.id = d.getInteger("id");
@@ -42,13 +47,22 @@ public class JSONAbgeordneter implements Abgeordneter {
         this.sterbedatum = d.getString("sterbedatum");
         this.geschlecht = d.getString("geschlecht");
         this.partei = d.getString("partei");
+
+        // String.class weil perioden String sind
         this.perioden = d.getList("perioden", String.class);
+        // Document.class weil jedes Mitglied dieser Liste selber wieder ein neues Dokument ist
+        // da unsere Reden kein id für sich selbst haben, fügen wir id von Abgeordneter hinzu
         for (Document s : d.getList("speeches", Document.class)) {
             reden.add(new JSONRede(id, s));
         }
     }
 
-    /** Dokument für die Collection "abgeordnete" (ohne Reden). */
+
+    /**
+     * JAVA OBJECT ------> DOCUMENT (für MongoDB)
+     * Dokument für die Collection "Abgeordneter" (ohne Reden, diese kommen in eigene Collection)
+     * @return Dokument
+     */
     public Document toDocument() {
         return new Document("id", id)
                 .append("vorname", vorname)
@@ -64,7 +78,7 @@ public class JSONAbgeordneter implements Abgeordneter {
                 .append("perioden", perioden);
     }
 
-    /** Reden dieses Abgeordneten. */
+    // Reden dieses Abgeordneten
     public List<JSONRede> getReden() { return reden; }
 
     @Override
