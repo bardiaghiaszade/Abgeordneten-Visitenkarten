@@ -1,17 +1,10 @@
-Please enter a MongoDB connection string (Default: mongodb://localhost/): mongodb://PPR_2026_060_rw@mongodb.ppr.lehre.texttechnologylab.org:27020/PPR_2026_060?authSource=PPR_2026_060
+Please enter a MongoDB connection string (Default: mongodb://localhost/): 
+
+
 mongodb://PPR_2026_060_rw@mongodb.ppr.lehre.texttechnologylab.org:27020/PPR_2026_060?authSource=PPR_2026_060
+
+
 Enter password: ********************
-Current Mongosh Log ID: 6b04271eb21f7ccea996b175
-Connecting to:          mongodb://<credentials>@mongodb.ppr.lehre.texttechnologylab.org:27020/PPR_2026_060?authSource=PPR_2026_060&directConnection=true&appName=mongosh+2.14.2
-Using MongoDB:          8.3.17
-Using Mongosh:          2.14.2
-mongosh 2.14.3 is available for download: https://www.mongodb.com/try/download/shell
 
-For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
 
-PPR_2026_060> show collections
-temp
-PPR_2026_060> show dbs
-PPR_2026_060  24.00 KiB
-PPR_2026_060> db.temp.countDocuments()
-0
+PPR_2026_060>
