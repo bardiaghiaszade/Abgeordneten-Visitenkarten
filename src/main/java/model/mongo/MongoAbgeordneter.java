@@ -16,7 +16,7 @@ public class MongoAbgeordneter implements Abgeordneter {
 
     /**
      * constructor
-     * @param doc Dokument aus der Collection "Abgeordneter"
+     * @param doc Dokument aus der Collection "abgeordnete"
      * Feld "anzahlReden" kommt aus der Aggregation (sonst 0)
      */
     public MongoAbgeordneter(Document doc) {
