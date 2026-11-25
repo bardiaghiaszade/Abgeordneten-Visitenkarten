@@ -25,8 +25,8 @@ import java.util.List;
  */
 public class Importer {
 
-    /** Default-Pfad der Importdatei. */
-    public static final String DEFAULT_INPUT = "mdb_speeches.json";
+    /** Feste Importdatei (liegt im Projektordner). */
+    private static final String INPUT = "mdb_speeches.json";
 
     private final MongoDBConnector connector;
 
@@ -36,31 +36,20 @@ public class Importer {
     }
 
     /**
-     * Import mit Default-Pfad.
-     *
-     * @return false, wenn bereits importiert
-     * @throws DatabaseException bei Fehler
-     */
-    public boolean importDaten() throws DatabaseException {
-        return importDaten(DEFAULT_INPUT);
-    }
-
-    /**
      * Liest die JSON-Datei und füllt die Collections "abgeordnete" und "reden".
      * Nichts passiert, wenn schon Daten vorhanden sind (kein doppelter Import).
      *
-     * @param pfad Pfad der JSON-Datei
      * @return false, wenn bereits importiert
      * @throws DatabaseException Datei nicht lesbar oder Datenbankfehler
      */
-    public boolean importDaten(String pfad) throws DatabaseException {
+    public boolean importDaten() throws DatabaseException {
         if (connector.count(Factory.ABGEORDNETE) > 0 || connector.count(Factory.REDEN) > 0) {
             return false;
         }
         List<Document> abgeordnete = new ArrayList<>();
         List<Document> reden = new ArrayList<>();
 
-        try (Reader in = new InputStreamReader(new FileInputStream(pfad), StandardCharsets.UTF_8)) {
+        try (Reader in = new InputStreamReader(new FileInputStream(INPUT), StandardCharsets.UTF_8)) {
             // JSON-Text ---> Document, Element für Element
             JsonReader reader = new JsonReader(in); // liest JSON-Text Stück für Stück
             DocumentCodec codec = new DocumentCodec(); // JSON-Objekt -> Document
@@ -75,7 +64,7 @@ public class Importer {
             }
             reader.readEndArray();
         } catch (IOException | RuntimeException e) {
-            throw new DatabaseException("Importdatei nicht lesbar oder fehlerhaft: " + pfad, e);
+            throw new DatabaseException("Importdatei nicht lesbar oder fehlerhaft: " + INPUT, e);
         }
         // alle gesammelten Dokumente in die jeweilige Collection schreiben
         connector.insert(Factory.ABGEORDNETE, abgeordnete);
