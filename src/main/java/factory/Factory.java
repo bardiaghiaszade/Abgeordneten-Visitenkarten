@@ -23,11 +23,16 @@ public class Factory {
     private final MongoDBConnector connector;
 
     /**
+     * Legt einen Index auf "abgeordneterId" an (schnelles $lookup und Suche der Reden).
+     * Index: sortiertes Verzeichnis auf "abgeordneterId"
+     * ---> $lookup und Suche finden Reden direkt, ohne die ganze Collection zu lesen
+     *
      * @param connector Verbindung zur MongoDB
      * @throws DatabaseException bei Datenbankfehler
      */
     public Factory(MongoDBConnector connector) throws DatabaseException {
         this.connector = connector;
+        connector.createIndex(REDEN, "abgeordneterId");
     }
 
 

@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+// wegen index
+import com.mongodb.client.model.Indexes;
 
 /**
  * Verbindung zur MongoDB: erstellen, lesen, zählen, aggregieren.
@@ -140,6 +142,24 @@ public class MongoDBConnector implements AutoCloseable {
             throw new DatabaseException("Aggregation auf '" + collection + "' fehlgeschlagen", e);
         }
     }
+
+
+
+    /**
+     * Erstellt einen Index für schnelle Suche (nichts passiert, wenn er schon existiert).
+     *
+     * @param collection Name der Collection
+     * @param feld Feld
+     * @throws DatabaseException bei Datenbankfehler
+     */
+    public void createIndex(String collection, String feld) throws DatabaseException {
+        try {
+            db.getCollection(collection).createIndex(Indexes.ascending(feld));
+        } catch (MongoException e) {
+            throw new DatabaseException("Index auf '" + collection + "' fehlgeschlagen", e);
+        }
+    }
+
 
     //Schließt die Verbindung
     @Override
