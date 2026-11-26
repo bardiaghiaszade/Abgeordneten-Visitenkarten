@@ -60,7 +60,7 @@ public class Main {
      *
      * @param importer Importer
      * @param scanner  Eingabe
-     * @throws DatabaseException     bei Import- oder Datenbankfehler
+     * @throws DatabaseException bei Import- oder Datenbankfehler
      * @throws InvalidInputException wenn die Datei nicht existiert
      */
     private static void importieren(Importer importer, Scanner scanner)
@@ -85,7 +85,7 @@ public class Main {
      *
      * @param factory Factory
      * @param scanner Eingabe
-     * @throws DatabaseException     bei Datenbankfehler
+     * @throws DatabaseException bei Datenbankfehler
      * @throws InvalidInputException bei unbekannter Fraktion
      */
     private static void auflisten(Factory factory, Scanner scanner)
@@ -125,8 +125,8 @@ public class Main {
      *
      * @param exporter Exporter
      * @param scanner Eingabe
-     * @throws DatabaseException     bei Datenbankfehler
-     * @throws IOException           bei Fehler beim Schreiben
+     * @throws DatabaseException bei Datenbankfehler
+     * @throws IOException bei Fehler beim Schreiben
      * @throws InvalidInputException bei ungültigem Pfad oder nicht existierendem Ordner
      */
     private static void exportieren(Exporter exporter, Scanner scanner)
@@ -135,17 +135,14 @@ public class Main {
         String ordner = scanner.nextLine().trim().replace("\"", ""); // Anführungszeichen entfernen
 
         if (ordner.isEmpty()) {
-            ordner = HTMLExporter.DEFAULT_OUTPUT;
-        }
-
-        File outputFolder = new File(ordner);
-
-        if (!outputFolder.isDirectory()) {
+            ordner = HTMLExporter.DEFAULT_OUTPUT; // Default-Ordner wird vom Export angelegt
+        } else if (!new File(ordner).isDirectory()) {
             throw new InvalidInputException("Ordner nicht gefunden: " + ordner);
         }
 
         System.out.println(exporter.export(ordner) ? "Export fertig" : "Bereits exportiert");
     }
+
 
     //------------------------------------------------------------------------------------------------------------------
 
