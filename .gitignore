@@ -45,6 +45,6 @@ config/
 data/
 output/
 .idea/
-PPR_2026_060*.txt
+PPR_2026_060.txt
 mdb_speeches.json
 output
