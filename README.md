@@ -1,4 +1,4 @@
-For a better and quicker understanding of the project, take a look at the UML diagrams in `UML/`.
+### For a better and quicker understanding of the project, take a look at the UML diagrams in `UML/`.
 
 Small Java 21 / Maven project for Bundestag members (Abgeordnete) and their speeches (Reden). It imports a JSON file into MongoDB, lists the members in a console menu and exports static HTML pages.
 
