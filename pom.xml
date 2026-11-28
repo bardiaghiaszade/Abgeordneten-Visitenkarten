@@ -8,7 +8,7 @@
     <artifactId>Uebung3</artifactId>
     <version>1.0</version>
 
-    <description>ENTER DESCRIPTION</description>
+    <description>visitenkarten</description>
 
     <licenses>
         <license>
@@ -28,7 +28,7 @@
         <developer>
             <id>ID</id>
             <name>Bardia Ghiaszade</name>
-            <email>sxxxxx@stud.uni-frankfurt.de</email>
+            <email>s5500106@stud.uni-frankfurt.de</email>
             <organization>Goethe University Frankfurt</organization>
             <roles>
                 <role>developer</role>
@@ -37,8 +37,8 @@
         </developer>
         <developer>
             <id>ID</id>
-            <name>YOUR TUTOR NAME</name>
-            <email>sxxxxx@stud.uni-frankfurt.de</email>
+            <name>Jonas Falkenstein</name>
+            <email>s0935083@stud.uni-frankfurt.de</email>
             <organization>Goethe University Frankfurt</organization>
             <roles>
                 <role>tutor</role>
