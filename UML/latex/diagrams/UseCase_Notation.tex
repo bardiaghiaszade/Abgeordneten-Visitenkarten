@@ -1,0 +1,59 @@
+
+\subsection{Use-Case: Daten importieren}
+\begin{description}
+    \item[Vorbedingung:] Verbindung zur MongoDB konfiguriert (\texttt{PPR\_2026\_060.txt}); Importdatei vorhanden.
+    \item[Ergebnis:] Collections \texttt{abgeordnete} und \texttt{reden} gefüllt (\enquote{Import fertig}); sind bereits Daten vorhanden, passiert nichts (\enquote{Bereits importiert}).
+    \item[Akteur:] Benutzer
+    \item[Ablauf:] Input-Path wählen $\rightarrow$ Datei prüfen $\rightarrow$ Daten in der Datenbank vorhanden? $\rightarrow$ JSON-Datei Element für Element lesen $\rightarrow$ Abgeordnete und Reden in die Collections schreiben.
+    \item[Umsetzung:] \texttt{Main.importieren}, \texttt{Importer.importDaten}, \texttt{MongoDBConnector.count}, \texttt{MongoDBConnector.insert}, \texttt{JSONAbgeordneter}, \texttt{JSONRede}
+\end{description}
+
+\subsection{Use-Case: Input path wählen}
+\begin{description}
+    \item[Vorbedingung:] Import wurde gestartet.
+    \item[Ergebnis:] Pfad der JSON-Datei; bei leerer Eingabe der Default-Pfad \texttt{mdb\_speeches.json}.
+    \item[Akteur:] Benutzer (als Teil von \texttt{Daten importieren}, \texttt{include})
+    \item[Ablauf:] Pfad eingeben (optional) $\rightarrow$ Anführungszeichen entfernen $\rightarrow$ leer: Default-Pfad $\rightarrow$ Existenz der Datei prüfen.
+    \item[Hinweis:] Existiert die Datei nicht, wird eine \texttt{InvalidInputException} gemeldet; das Menü läuft weiter.
+    \item[Umsetzung:] \texttt{Main.importieren}, \texttt{Importer.DEFAULT\_INPUT}, \texttt{InvalidInputException}
+\end{description}
+
+\subsection{Use-Case: Abgeordnete auflisten}
+\begin{description}
+    \item[Vorbedingung:] Daten sind importiert.
+    \item[Ergebnis:] Liste der Abgeordneten mit Anzahl der Reden, absteigend nach der Anzahl der Reden sortiert.
+    \item[Akteur:] Benutzer
+    \item[Ablauf:] Fraktionen anzeigen $\rightarrow$ nach Fraktion filtern (optional) $\rightarrow$ Abgeordnete aus der Datenbank holen $\rightarrow$ ausgeben.
+    \item[Hinweis:] Selektion, Zählung der Reden und Sortierung erfolgen in der Datenbank (Aggregation).
+    \item[Umsetzung:] \texttt{Main.auflisten}, \texttt{Factory.getFraktionen}, \texttt{Factory.getAbgeordnete}
+\end{description}
+
+\subsection{Use-Case: Nach Fraktion filtern}
+\begin{description}
+    \item[Vorbedingung:] Abgeordnete werden aufgelistet.
+    \item[Ergebnis:] Nur Abgeordnete der gewählten Fraktion; bei leerer Eingabe alle Abgeordneten.
+    \item[Akteur:] Benutzer (als Teil von \texttt{Abgeordnete auflisten}, \texttt{include})
+    \item[Ablauf:] Name der Fraktion eingeben $\rightarrow$ mit der Liste der Fraktionen abgleichen (Groß-/Kleinschreibung egal) $\rightarrow$ Abgeordnete der Fraktion abfragen.
+    \item[Hinweis:] Eine unbekannte Fraktion führt zu einer \texttt{InvalidInputException}; das Menü läuft weiter.
+    \item[Umsetzung:] \texttt{Main.auflisten}, \texttt{Factory.getFraktionen}, \texttt{Factory.getAbgeordnete(fraktion)}
+\end{description}
+
+\subsection{Use-Case: HTML exportieren}
+\begin{description}
+    \item[Vorbedingung:] Daten sind importiert.
+    \item[Ergebnis:] Übersichtsseite \texttt{index.html} (Abgeordnete je Fraktion, nach Anzahl der Reden sortiert, mit Links) und je Abgeordneter eine Visitenkarte \texttt{abgeordnete/ID.html} mit Details und Reden (\enquote{Export fertig}); wurde dort bereits exportiert, passiert nichts (\enquote{Bereits exportiert}).
+    \item[Akteur:] Benutzer
+    \item[Ablauf:] Output-Path wählen $\rightarrow$ vorhandenen Export prüfen $\rightarrow$ Fraktionen und Abgeordnete holen $\rightarrow$ Reden je Abgeordneter laden (nur wenn vorhanden) $\rightarrow$ Visitenkarten schreiben $\rightarrow$ Übersichtsseite zuletzt schreiben.
+    \item[Hinweis:] Die Übersichtsseite wird zuletzt geschrieben; ist sie vorhanden, ist der Export vollständig.
+    \item[Umsetzung:] \texttt{Main.exportieren}, \texttt{Exporter}, \texttt{HTMLExporter.export}, \texttt{HTMLService.uebersicht}, \texttt{HTMLService.visitenkarte}, \texttt{Factory.getReden}
+\end{description}
+
+\subsection{Use-Case: Output path wählen}
+\begin{description}
+    \item[Vorbedingung:] Export wurde gestartet.
+    \item[Ergebnis:] Zielordner des Exports; bei leerer Eingabe der Default-Ordner \texttt{output}.
+    \item[Akteur:] Benutzer (als Teil von \texttt{HTML exportieren}, \texttt{include})
+    \item[Ablauf:] Pfad eingeben (optional) $\rightarrow$ Anführungszeichen entfernen $\rightarrow$ leer: Default-Ordner $\rightarrow$ eigener Pfad: Existenz des Ordners prüfen.
+    \item[Hinweis:] Der Default-Ordner wird beim Export angelegt. Ein eigener Pfad muss ein vorhandener Ordner sein, sonst wird eine \texttt{InvalidInputException} gemeldet.
+    \item[Umsetzung:] \texttt{Main.exportieren}, \texttt{HTMLExporter.DEFAULT\_OUTPUT}, \texttt{InvalidInputException}
+\end{description}

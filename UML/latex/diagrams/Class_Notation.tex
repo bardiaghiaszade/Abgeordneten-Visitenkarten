@@ -1,0 +1,50 @@
+
+
+\subsection{Beziehungen}
+\begin{itemize}
+    \item \textbf{Realisierung:} Eine Klasse implementiert ein Interface. \texttt{JSONAbgeordneter} und \texttt{MongoAbgeordneter} realisieren \texttt{Abgeordneter}, \texttt{JSONRede} und \texttt{MongoRede} realisieren \texttt{Rede}, \texttt{HTMLExporter} realisiert \texttt{Exporter}.
+    \item \textbf{Komposition:} Ein \texttt{JSONAbgeordneter} erzeugt und besitzt seine \texttt{JSONRede}-Objekte. Sie existieren nicht ohne ihn.
+    \item \textbf{Assoziation:} Direkte Verbindung zwischen Klassen, die als Attribut gespeichert wird, z.\,B. \texttt{Factory} und \texttt{MongoDBConnector}.
+    \item \textbf{Abhängigkeit:} Eine Klasse verwendet eine andere, ohne sie als Attribut zu speichern, z.\,B. als Parameter, Rückgabetyp, erzeugtes Objekt oder geworfene Exception.
+\end{itemize}
+
+\subsection{Kardinalitäten}
+Nur bei Assoziationen und Kompositionen. Sie zeigen, wie viele Objekte miteinander verbunden sein können.
+
+\begin{center}
+\begin{tabular}{|p{4.2cm}|p{2.5cm}|p{8.5cm}|}
+\hline
+\textbf{Beziehung} & \textbf{Kardinalität} & \textbf{Bedeutung} \\ \hline
+\texttt{JSONAbgeordneter} -- \texttt{JSONRede} & 1 zu 0..* & Ein Abgeordneter hat beliebig viele (auch keine) Reden. Jede Rede gehört zu genau einem Abgeordneten. \\ \hline
+\texttt{Importer} -- \texttt{MongoDBConnector} & 0..* zu 1 & Jeder Importer verwendet genau eine Verbindung. \\ \hline
+\texttt{Factory} -- \texttt{MongoDBConnector} & 0..* zu 1 & Jede Factory verwendet genau eine Verbindung. \\ \hline
+\texttt{HTMLExporter} -- \texttt{Factory} & 0..* zu 1 & Jeder Exporter liest die Daten über genau eine Factory. \\ \hline
+\end{tabular}
+\end{center}
+
+\paragraph{Hinweis zu Reden.}
+\texttt{JSONRede} und \texttt{MongoRede} speichern nur die ID des Abgeordneten (\texttt{abgeordnetenId}), keinen Verweis auf ein Objekt. Deshalb gibt es keine Assoziation von der Rede zum Abgeordneten. \texttt{MongoAbgeordneter} und \texttt{MongoRede} halten jeweils nur ein \texttt{Document} und sind nicht miteinander verbunden.
+
+\subsection{Prinzip der Architektur}
+\begin{itemize}
+    \item \texttt{Main}: Konsolenmenü; erzeugt Verbindung, \texttt{Importer}, \texttt{Factory} und \texttt{Exporter} und ruft sie auf.
+    \item \texttt{MongoDBConnector}: Verbindung zur MongoDB; Erstellen, Lesen, Zählen und Aggregieren von Dokumenten. Die Zugangsdaten stammen aus einer Konfigurationsdatei (\texttt{Properties}).
+    \item \texttt{Abgeordneter}, \texttt{Rede}: Interfaces für die Datenstrukturen. \texttt{Factory} und \texttt{HTMLService} arbeiten nur mit diesen Interfaces.
+    \item \texttt{JSONAbgeordneter}, \texttt{JSONRede}: Implementierung zum Einlesen der JSON-Datei; \texttt{toDocument} erzeugt die Dokumente für den Import.
+    \item \texttt{MongoAbgeordneter}, \texttt{MongoRede}: andere Implementierung zum Lesen aus der MongoDB; sie halten das \texttt{Document} und lesen die Werte direkt daraus.
+    \item \texttt{Importer}: Liest die JSON-Datei und schreibt die Dokumente in die Collections \texttt{abgeordnete} und \texttt{reden}. Sind bereits Daten vorhanden, passiert nichts.
+    \item \texttt{Factory}: Einziger Zugriff auf die Daten; Fraktionen, Abgeordnete einer Fraktion (absteigend nach der Anzahl der Reden) und Reden eines Abgeordneten. Selektion, Zählung und Sortierung erfolgen in der Datenbank (Aggregation).
+    \item \texttt{Exporter}: Interface für den Export; \texttt{HTMLExporter} liest die Daten über die \texttt{Factory} und schreibt die Übersichtsseite und eine Seite je Abgeordneter.
+    \item \texttt{HTMLService}: \texttt{static} Service-Funktionen, die den HTML-Text erzeugen.
+    \item \texttt{DatabaseException}, \texttt{InvalidInputException}: Eigene Fehlertypen für Datenbankfehler bzw. fehlerhafte Eingaben.
+    \item Attribute sind \texttt{private}; öffentlich sind nur die Konstanten der Klassen \texttt{Importer}, \texttt{Factory} und \texttt{HTMLExporter}.
+\end{itemize}
+
+\subsection{Nicht dargestellt}
+\begin{itemize}
+    \item Java-Klassen und Bibliotheken (z.\,B. \texttt{Document}, \texttt{Bson}, \texttt{MongoClient}, \texttt{MongoDatabase}, \texttt{Scanner}, \texttt{Properties}) sowie Testklassen.
+    \item Vererbung zu Java-Klassen: \texttt{DatabaseException} und \texttt{InvalidInputException} erben von \texttt{Exception}; \texttt{MongoDBConnector} implementiert \texttt{AutoCloseable}.
+    \item Die Abhängigkeiten von \texttt{Exporter} und \texttt{HTMLExporter} zur \texttt{DatabaseException} (\texttt{throws}) sind der Übersicht halber nicht dargestellt.
+    \item \texttt{Main} verwendet \texttt{Abgeordneter} nur lokal (Schleifenvariable); diese Abhängigkeit ist nicht dargestellt.
+    \item In \texttt{JSONAbgeordneter}, \texttt{JSONRede}, \texttt{MongoAbgeordneter} und \texttt{MongoRede} sind die Getter der Interfaces zu \texttt{+ Getter des Interface} zusammengefasst.
+\end{itemize}

@@ -1,0 +1,273 @@
+\begin{center}
+
+\begin{tikzpicture}[scale=0.34, transform shape]
+
+
+
+\umlclass[x=0, y=5, name=mainClass]{Main}
+{
+    - CONFIG : String \{static, readOnly\}
+}
+{
+    + main(args : String[]) : void \{static\} \\
+    - importieren(importer : Importer, scanner : Scanner) : void \{static\} \\
+    - auflisten(factory : Factory, scanner : Scanner) : void \{static\} \\
+    - exportieren(exporter : Exporter, scanner : Scanner) : void \{static\}
+}
+
+
+
+\umlclass[x=0, y=9.5, name=invalidInputException, fill=red!40]{InvalidInputException}
+{}
+{
+    + InvalidInputException(message : String)
+}
+
+\umlclass[x=-13, y=2, name=databaseException, fill=red!40]{DatabaseException}
+{}
+{
+    + DatabaseException(message : String) \\
+    + DatabaseException(message, cause)
+}
+
+
+
+
+
+\umlclass[x=-10, y=-10, name=mongoDBConnector]{MongoDBConnector}
+{
+    - client : MongoClient \{readOnly\} \\
+    - db : MongoDatabase \{readOnly\}
+}
+{
+    + MongoDBConnector(configPfad : String) \\
+    - lese(p : Properties, key : String) : String \{static\} \\
+    + insert(collection : String, dokumente : List<Document>) : void \\
+    + find(collection : String, filter : Bson) : List<Document> \\
+    + count(collection : String) : long \\
+    + aggregate(collection : String, pipeline : List<Bson>) : List<Document> \\
+    + createIndex(collection : String, feld : String) : void \\
+    + close() : void
+}
+
+
+
+
+
+\umlclass[x=-23, y=-4, name=importer]{Importer}
+{
+    + DEFAULT\_INPUT : String \{static, readOnly\} \\
+    - connector : MongoDBConnector \{readOnly\}
+}
+{
+    + Importer(connector : MongoDBConnector) \\
+    + importDaten(pfad : String) : boolean
+}
+
+
+
+
+\umlclass[x=4, y=-4, name=factory]{Factory}
+{
+    + ABGEORDNETE : String \{static, readOnly\} \\
+    + REDEN : String \{static, readOnly\} \\
+    - connector : MongoDBConnector \{readOnly\}
+}
+{
+    + Factory(connector : MongoDBConnector) \\
+    + getFraktionen() : List<String> \\
+    + getAbgeordnete(fraktion : String) : List<Abgeordneter> \\
+    + getReden(abgeordneterId : int) : List<Rede>
+}
+
+
+
+\umlclass[x=26, y=-4, name=exporter, fill=blue!20]{Exporter<interface>}
+{}
+{
+    + export(ordner : String) : boolean
+}
+
+\umlclass[x=16, y=0, name=htmlExporter]{HTMLExporter}
+{
+    + DEFAULT\_OUTPUT : String \{static, readOnly\} \\
+    - factory : Factory \{readOnly\}
+}
+{
+    + HTMLExporter(factory : Factory) \\
+    + export(ordner : String) : boolean
+}
+
+\umlclass[x=22, y=-10, name=htmlService]{HTMLService}
+{
+    - KOPF : String \{static, readOnly\} \\
+    - ENDE : String \{static, readOnly\}
+}
+{
+    + uebersicht(nachFraktion : Map<String, List<Abgeordneter>>) : String \{static\} \\
+    + visitenkarte(a : Abgeordneter, reden : List<Rede>) : String \{static\}
+}
+
+
+
+
+
+
+\umlclass[x=-5, y=-20, name=abgeordneter, fill=blue!20]{Abgeordneter<interface>}
+{}
+{
+    + getId() : int \\
+    + getVorname() : String \\
+    + getName() : String \\
+    + getAkademischerTitel() : String \\
+    + getAnredeTitel() : String \\
+    + getBeruf() : String \\
+    + getGeburtsdatum() : String \\
+    + getGeburtsort() : String \\
+    + getSterbedatum() : String \\
+    + getGeschlecht() : String \\
+    + getPartei() : String \\
+    + getPerioden() : List<String> \\
+    + getAnzahlReden() : int
+}
+
+\umlclass[x=18, y=-20, name=rede, fill=blue!20]{Rede<interface>}
+{}
+{
+    + getAbgeordnetenId() : int \\
+    + getDatum() : String \\
+    + getTop() : String \\
+    + getWp() : int \\
+    + getContent() : String
+}
+
+
+
+
+
+
+\umlclass[x=-28, y=-25, name=jsonAbgeordneter]{JSONAbgeordneter}
+{
+    - id : int \{readOnly\} \\
+    - vorname : String \{readOnly\} \\
+    - name : String \{readOnly\} \\
+    - akademischerTitel : String \{readOnly\} \\
+    - anredeTitel : String \{readOnly\} \\
+    - beruf : String \{readOnly\} \\
+    - geburtsdatum : String \{readOnly\} \\
+    - geburtsort : String \{readOnly\} \\
+    - sterbedatum : String \{readOnly\} \\
+    - geschlecht : String \{readOnly\} \\
+    - partei : String \{readOnly\} \\
+    - perioden : List<String> \{readOnly\} \\
+    - reden : List<JSONRede> \{readOnly\}
+}
+{
+    + JSONAbgeordneter(d : Document) \\
+    + toDocument() : Document \\
+    + getReden() : List<JSONRede> \\
+    + Getter des Interface
+}
+
+\umlclass[x=-12, y=-30, name=jsonRede]{JSONRede}
+{
+    - abgeordnetenId : int \{readOnly\} \\
+    - datum : String \{readOnly\} \\
+    - top : String \{readOnly\} \\
+    - wp : int \{readOnly\} \\
+    - content : String \{readOnly\}
+}
+{
+    + JSONRede(abgeordnetenId : int, d : Document) \\
+    + toDocument() : Document \\
+    + Getter des Interface
+}
+
+
+
+
+
+
+\umlclass[x=3, y=-30, name=mongoAbgeordneter]{MongoAbgeordneter}
+{
+    - doc : Document \{readOnly\}
+}
+{
+    + MongoAbgeordneter(doc : Document) \\
+    + Getter des Interface
+}
+
+\umlclass[x=12, y=-30, name=mongoRede]{MongoRede}
+{
+    - doc : Document \{readOnly\}
+}
+{
+    + MongoRede(doc : Document) \\
+    + Getter des Interface
+}
+
+
+
+
+
+\umlHVdep{mainClass}{importer}
+\umldep{mainClass}{factory}
+\umldep{mainClass}{mongoDBConnector}
+\umlHVdep{mainClass}{exporter}
+\umlHVdep{mainClass}{htmlExporter}
+\umldep{mainClass}{invalidInputException}
+\umldep{mainClass}{databaseException}
+
+
+
+
+\umldep{mongoDBConnector}{databaseException}
+
+
+
+\umluniassoc[mult1=0..*, mult2=1, arg2=connector]{importer}{mongoDBConnector}
+
+
+\umlHVdep{importer}{jsonAbgeordneter}
+\umlVHdep{importer}{jsonRede}
+\umldep{importer}{factory}
+\umldep{importer}{databaseException}
+
+
+
+\umluniassoc[mult1=0..*, mult2=1, arg2=connector]{factory}{mongoDBConnector}
+
+
+\umlVHdep{factory}{mongoAbgeordneter}
+\umlHVdep{factory}{mongoRede}
+\umldep{factory}{abgeordneter}
+\umldep{factory}{rede}
+\umldep{factory}{databaseException}
+
+
+\umlreal{htmlExporter}{exporter}
+
+
+\umluniassoc[mult1=0..*, mult2=1, arg2=factory]{htmlExporter}{factory}
+
+
+\umldep{htmlExporter}{htmlService}
+
+
+\umldep{htmlService}{abgeordneter}
+\umldep{htmlService}{rede}
+
+
+\umlreal{jsonAbgeordneter}{abgeordneter}
+\umlreal{mongoAbgeordneter}{abgeordneter}
+\umlreal{jsonRede}{rede}
+\umlreal{mongoRede}{rede}
+
+
+\umlunicompo[mult1=1, mult2=0..*, arg2=reden]{jsonAbgeordneter}{jsonRede}
+
+
+\end{tikzpicture}
+
+\end{center}
+

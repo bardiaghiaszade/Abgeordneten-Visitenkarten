@@ -1,0 +1,43 @@
+
+\subsection{Die Pakete}
+\begin{description}
+    \item[main:] Startpunkt des Systems; enthält \texttt{Main} mit dem Konsolenmenü.
+    \item[importer:] Import der JSON-Datei in die MongoDB mit \texttt{Importer}.
+    \item[factory:] Zugriff auf die Daten mit \texttt{Factory}; Selektion, Filter und Sortierung über die Datenbank.
+    \item[export:] HTML-Export mit dem Interface \texttt{Exporter}, \texttt{HTMLExporter} und \texttt{HTMLService}.
+    \item[database:] Verbindung zur MongoDB mit \texttt{MongoDBConnector}.
+    \item[exception:] Eigene Fehlertypen \texttt{DatabaseException} und \texttt{InvalidInputException}; keine Abhängigkeiten zu anderen Paketen.
+    \item[model:] Interfaces \texttt{Abgeordneter} und \texttt{Rede}; keine Abhängigkeiten zu anderen Paketen.
+    \item[model.json:] Implementierung der Interfaces für die JSON-Datei (\texttt{JSONAbgeordneter}, \texttt{JSONRede}); wird beim Import verwendet.
+    \item[model.mongo:] Implementierung der Interfaces für die MongoDB (\texttt{MongoAbgeordneter}, \texttt{MongoRede}); wird beim Lesen verwendet.
+\end{description}
+
+\subsection{Abhängigkeiten}
+\begin{itemize}
+    \item \texttt{main} $\rightarrow$ \texttt{importer}, \texttt{factory}, \texttt{export}, \texttt{database}, \texttt{exception}, \texttt{model}: Startet das Menü und verbindet die Komponenten.
+    \item \texttt{importer} $\rightarrow$ \texttt{database}: Dokumente in die Collections schreiben.
+    \item \texttt{importer} $\rightarrow$ \texttt{model.json}: JSON-Daten einlesen und in Dokumente umwandeln.
+    \item \texttt{importer} $\rightarrow$ \texttt{factory}: Namen der Collections (Konstanten).
+    \item \texttt{importer} $\rightarrow$ \texttt{exception}: Fehler beim Import melden.
+    \item \texttt{factory} $\rightarrow$ \texttt{database}: Daten lesen und aggregieren.
+    \item \texttt{factory} $\rightarrow$ \texttt{model.mongo}: Ergebnisse als Objekte bereitstellen.
+    \item \texttt{factory} $\rightarrow$ \texttt{model}: Rückgabe über die Interfaces.
+    \item \texttt{factory} $\rightarrow$ \texttt{exception}: Datenbankfehler weitergeben.
+    \item \texttt{export} $\rightarrow$ \texttt{factory}: Abgeordnete und Reden lesen.
+    \item \texttt{export} $\rightarrow$ \texttt{model}: Daten über die Interfaces verwenden.
+    \item \texttt{export} $\rightarrow$ \texttt{exception}: Fehler weitergeben.
+    \item \texttt{database} $\rightarrow$ \texttt{exception}: Verbindungs- und Datenbankfehler als \texttt{DatabaseException} melden.
+    \item \texttt{model.json} $\rightarrow$ \texttt{model}: implementiert \texttt{Abgeordneter} und \texttt{Rede}.
+    \item \texttt{model.mongo} $\rightarrow$ \texttt{model}: implementiert \texttt{Abgeordneter} und \texttt{Rede}.
+\end{itemize}
+
+\subsection{Hinweise}
+\begin{itemize}
+    \item Die Pfeile von \texttt{model.json} und \texttt{model.mongo} zeigen im Diagramm auf die Interfaces \texttt{Abgeordneter} und \texttt{Rede}.
+    \item Der Export liest die Daten nur über die \texttt{Factory} und hat keinen direkten Zugriff auf die Datenbank.
+    \item Selektion, Filter und Sortierung nach der Anzahl der Reden erfolgen ausschließlich in der Datenbank (Aggregation in der \texttt{Factory}).
+    \item Die Abhängigkeit \texttt{importer} $\rightarrow$ \texttt{factory} besteht nur wegen der Namen der Collections.
+    \item \texttt{Main} kennt die Pakete \texttt{model.json} und \texttt{model.mongo} nicht; es verwendet nur die Interfaces aus \texttt{model}.
+    \item Java-Klassen, der MongoDB-Treiber (BSON) und Konfigurationsdateien sind nicht dargestellt.
+    \item Erweiterbarkeit: Ein neues Ausgabeformat benötigt nur eine weitere Implementierung von \texttt{Exporter} im Paket \texttt{export}.
+\end{itemize}

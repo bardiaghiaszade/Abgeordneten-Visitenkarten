@@ -1,0 +1,110 @@
+\begin{tikzpicture}
+
+\begin{umlpackage}[fill=black!20]{main}
+
+    \umlclass[x=-7, y=-13, name=MainClass]{Main}{}{}
+
+
+    \begin{umlpackage}[x=-9, y=-15, fill=white]{importer}
+
+        \umlclass[x=0, y=-2]{Importer}{}{}
+
+    \end{umlpackage}
+
+
+
+    \begin{umlpackage}[x=-2, y=-15, fill=white]{factory}
+
+        \umlclass[x=0, y=-2]{Factory}{}{}
+
+    \end{umlpackage}
+
+
+
+    \begin{umlpackage}[x=2, y=-10, fill=white]{export}
+
+        \umlclass[x=0, y=-2, fill=purple!20]{Exporter<interface>}{}{}
+        \umlclass[x=0, y=-3.5]{HTMLExporter}{}{}
+        \umlclass[x=0, y=-5]{HTMLService}{}{}
+
+    \end{umlpackage}
+
+
+
+    \begin{umlpackage}[x=-14, y=-10, fill=white]{database}
+
+        \umlclass[x=0, y=-2]{MongoDBConnector}{}{}
+
+    \end{umlpackage}
+
+
+
+    \begin{umlpackage}[x=2, y=0, fill=white]{exception}
+
+        \umlclass[x=0, y=-2]{DatabaseException}{}{}
+        \umlclass[x=0, y=-3.5]{InvalidInputException}{}{}
+
+    \end{umlpackage}
+
+
+
+
+    \begin{umlpackage}[x=-9.5, y=0, fill=white]{model}
+
+        \umlclass[x=-3, y=-2, fill=purple!20]{Abgeordneter<interface>}{}{}
+        \umlclass[x=3, y=-2, fill=purple!20]{Rede<interface>}{}{}
+
+        \begin{umlpackage}[x=-4, y=-3]{json}
+
+            \umlclass[x=0, y=-2]{JSONAbgeordneter}{}{}
+            \umlclass[x=0, y=-3.5]{JSONRede}{}{}
+
+        \end{umlpackage}
+
+        \begin{umlpackage}[x=4, y=-3]{mongo}
+
+            \umlclass[x=0, y=-2]{MongoAbgeordneter}{}{}
+            \umlclass[x=0, y=-3.5]{MongoRede}{}{}
+
+        \end{umlpackage}
+
+    \end{umlpackage}
+
+
+
+    \umldep{MainClass}{importer}
+    \umldep{MainClass}{factory}
+    \umldep{MainClass}{export}
+    \umldep{MainClass}{database}
+    \umldep{MainClass}{exception}
+    \umldep{MainClass}{model}
+
+
+    \umldep{importer}{database}
+    \umldep{importer}{factory}
+    \umldep{importer}{exception}
+    \umldep{importer}{json}
+
+
+    \umldep{factory}{database}
+    \umldep{factory}{exception}
+    \umldep{factory}{model}
+    \umldep{factory}{mongo}
+
+
+    \umldep{export}{factory}
+    \umldep{export}{exception}
+    \umldep{export}{model}
+
+
+    \umldep{database}{exception}
+
+ 
+    \umldep{json}{Abgeordneter<interface>}
+    \umldep{mongo}{Abgeordneter<interface>}
+    \umldep{json}{Rede<interface>}
+    \umldep{mongo}{Rede<interface>}
+
+\end{umlpackage}
+
+\end{tikzpicture}
